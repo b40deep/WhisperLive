@@ -14,7 +14,8 @@ def sample_callback(text, is_final):
     last_text = text
     client.paused = True
     # Define the command to be run
-    command = f'echo "{text[-1]}" | piper --model en_US-lessac-medium --output-raw | aplay -r 22050 -f S16_LE -t raw -'
+    # command = f'echo "{text[-1]}" | piper --model en_US-lessac-medium --output-raw | aplay -r 22050 -f S16_LE -t raw -'
+    command = f'echo "{text[-1]}"'
     # Run the command
     subprocess.run(command, shell=True, check=True)
 
