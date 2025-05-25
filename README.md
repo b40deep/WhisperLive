@@ -1,135 +1,61 @@
-# WhisperLive
+# herbert ai robot using azure speech 
 
-<h2 align="center">
-  <a href="https://www.youtube.com/watch?v=0PHWCApIcCI"><img
-src="https://img.youtube.com/vi/0PHWCApIcCI/0.jpg" style="background-color:rgba(0,0,0,0);" height=300 alt="WhisperLive"></a>
-  <br><br>A nearly-live implementation of OpenAI's Whisper.
-<br><br>
-</h2>
+## what is this
+experiments using:
+- azure `text to speech` and `speech to text`
+- what else...?
 
-This project is a real-time transcription application that uses the OpenAI Whisper model
-to convert speech input into text output. It can be used to transcribe both live audio
-input from microphone and pre-recorded audio files.
+## how can i use it?
+I want to make a speech based workflow for an ai tool that does stuff I make it do.
 
-## Installation
-- Install PyAudio and ffmpeg
-```bash
- bash scripts/setup.sh
-```
+[note to self] More details on ideas to build, etc, are on my trello
 
-- Install whisper-live from pip
-```bash
- pip install whisper-live
-```
+## todo / done list
+Key: this ✅ is done. ⏩ is current WIP. 🔎 is being looked into [substeps for the WIP]. 🕛 is up next.
+- ✅ [apr16] set up the repo.
+- ✅ [apr23-24] added boilerplate code
+- ✅ [apr23-24] tts, stt, llm all work
+- ✅ [apr22-23] what parts to buy / use: _AND_ figure out coding workflow **while** we get the parts (trello has the links)
+- ✅ [apr23-24] get the azure speech to text code working
+- ✅ [apr23-24] get the azure text to speech code working
+- ✅ [apr25] get faster-whisper working [going to a new branch for this.]
+    - ✅ download faster-whisper ([I'm using THIS MODDED ONE](https://github.com/AIWintermuteAI/WhisperLive.git), video [here](https://www.youtube.com/watch?v=3yLFWpKKbe8))
+    - ✅ load it via terminal
+- ✅ [apr25] stt working via terminal
+- ⏩ llm working via terminal
+- 🕛 tts working via terminal
+- 🕛 fix gradio stream from mic
+- 🕛 load entire workflow via gradio
 
-### Setting up NVIDIA/TensorRT-LLM for TensorRT backend
-- Please follow [TensorRT_whisper readme](https://github.com/collabora/WhisperLive/blob/main/TensorRT_whisper.md) for setup of [NVIDIA/TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM) and for building Whisper-TensorRT engine.
+## previous workflows
 
-## Getting Started
-The server supports two backends `faster_whisper` and `tensorrt`. If running `tensorrt` backend follow [TensorRT_whisper readme](https://github.com/collabora/WhisperLive/blob/main/TensorRT_whisper.md)
+### [current] faster-whisper for 'cheap' forever stt.
+Load up faster-whisper and run stt forever on one thread. then check for keywords, and run the pipeline from there.
 
-### Running the Server
-- [Faster Whisper](https://github.com/SYSTRAN/faster-whisper) backend
-```bash
-python3 run_server.py --port 9090 \
-                      --backend faster_whisper
-  
-# running with custom model
-python3 run_server.py --port 9090 \
-                      --backend faster_whisper
-                      -fw "/path/to/custom/faster/whisper/model"
-```
+### [failed] run threads for the vad and stt. then run llm and tts.
+This was perfect. but I can't seem to get it to work. I implemented it by calling defs from their files and it double-run the stt. I implemented the defs directly into my main code and it more than double-run the stt - this time it called stt every so often, in a forever loop.
+- 🐞 the `def2` (in `main_async.py`) runs twice **sometimes**. I've tried zeroing out the variables so the second run won't succeed but it still runs with knowledge of them. So its call is not normal. I can't find where the bug is coming from.
+- 🐞 sometimes azure stt retuns unusable audio and my app crashes.
+    ```
+    [wav @ 000001ec79e25c40] invalid start code [0][0][0][0] in RIFF header
+    [cache @ 000001ec79e261c0] Statistics, cache hits:0 cache misses:0
+    [in#0 @ 000001ec79e0b9c0] Error opening input: Invalid data found when processing input
+    Error opening input file cache:pipe:0.
+    Error opening input files: Invalid data found when processing input
+    ```
+- 🐞 haven't handled the llm exception when I trigger its `content filter` and it rejects my request.
 
-- TensorRT backend. Currently, we recommend to only use the docker setup for TensorRT. Follow [TensorRT_whisper readme](https://github.com/collabora/WhisperLive/blob/main/TensorRT_whisper.md) which works as expected. Make sure to build your TensorRT Engines before running the server with TensorRT backend.
-```bash
-# Run English only model
-python3 run_server.py -p 9090 \
-                      -b tensorrt \
-                      -trt /home/TensorRT-LLM/examples/whisper/whisper_small_en
+## 🔎 what parts to buy / use:
+- microphone: 
+- speaker: 
+- amplifier: 
+- LEDs: 
+- motors / servos for actuation: 
+- lisach, start with [this guy](https://www.youtube.com/watch?v=81-zLRHBG0o)
 
-# Run Multilingual model
-python3 run_server.py -p 9090 \
-                      -b tensorrt \
-                      -trt /home/TensorRT-LLM/examples/whisper/whisper_small \
-                      -m
-```
+## ideas on how to use it 💡 
+1. [note to self] check Trello
 
 
-### Running the Client
-- Initializing the client:
-```python
-from whisper_live.client import TranscriptionClient
-client = TranscriptionClient(
-  "localhost",
-  9090,
-  lang="en",
-  translate=False,
-  model="small",
-  use_vad=False,
-)
-```
-It connects to the server running on localhost at port 9090. Using a multilingual model, language for the transcription will be automatically detected. You can also use the language option to specify the target language for the transcription, in this case, English ("en"). The translate option should be set to `True` if we want to translate from the source language to English and `False` if we want to transcribe in the source language.
-
-- Trancribe an audio file:
-```python
-client("tests/jfk.wav")
-```
-
-- To transcribe from microphone:
-```python
-client()
-```
-
-- To transcribe from a HLS stream:
-```python
-client(hls_url="http://as-hls-ww-live.akamaized.net/pool_904/live/ww/bbc_1xtra/bbc_1xtra.isml/bbc_1xtra-audio%3d96000.norewind.m3u8") 
-```
-
-## Browser Extensions
-- Run the server with your desired backend as shown [here](https://github.com/collabora/WhisperLive?tab=readme-ov-file#running-the-server).
-- Transcribe audio directly from your browser using our Chrome or Firefox extensions. Refer to [Audio-Transcription-Chrome](https://github.com/collabora/whisper-live/tree/main/Audio-Transcription-Chrome#readme) and [Audio-Transcription-Firefox](https://github.com/collabora/whisper-live/tree/main/Audio-Transcription-Firefox#readme) for setup instructions.
-
-## Whisper Live Server in Docker
-- GPU
-  - Faster-Whisper
-  ```bash
-  docker run -it --gpus all -p 9090:9090 ghcr.io/collabora/whisperlive-gpu:latest
-  ```
-
-  - TensorRT. Follow [TensorRT_whisper readme](https://github.com/collabora/WhisperLive/blob/main/TensorRT_whisper.md) in order to setup docker and use TensorRT backend. We provide a pre-built docker image which has TensorRT-LLM built and ready to use.
-
-- CPU
-```bash
-docker run -it -p 9090:9090 ghcr.io/collabora/whisperlive-cpu:latest
-```
-**Note**: By default we use "small" model size. To build docker image for a different model size, change the size in server.py and then build the docker image.
-
-## Future Work
-- [ ] Add translation to other languages on top of transcription.
-- [x] TensorRT backend for Whisper.
-
-## Contact
-
-We are available to help you with both Open Source and proprietary AI projects. You can reach us via the Collabora website or [vineet.suryan@collabora.com](mailto:vineet.suryan@collabora.com) and [marcus.edel@collabora.com](mailto:marcus.edel@collabora.com).
-
-## Citations
-```bibtex
-@article{Whisper
-  title = {Robust Speech Recognition via Large-Scale Weak Supervision},
-  url = {https://arxiv.org/abs/2212.04356},
-  author = {Radford, Alec and Kim, Jong Wook and Xu, Tao and Brockman, Greg and McLeavey, Christine and Sutskever, Ilya},
-  publisher = {arXiv},
-  year = {2022},
-}
-```
-
-```bibtex
-@misc{Silero VAD,
-  author = {Silero Team},
-  title = {Silero VAD: pre-trained enterprise-grade Voice Activity Detector (VAD), Number Detector and Language Classifier},
-  year = {2021},
-  publisher = {GitHub},
-  journal = {GitHub repository},
-  howpublished = {\url{https://github.com/snakers4/silero-vad}},
-  email = {hello@silero.ai}
-}
+## notes
+- tried porting exisiting azure code to micropython. Failed. Not enough RAM. Pivot to Pi Zero 2W.![alt text](images/rp2040_out_of_memory.png)
