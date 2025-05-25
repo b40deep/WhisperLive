@@ -2,3 +2,10 @@ PyAudio
 ffmpeg-python
 scipy
 websocket-client
+
+#MIGISHA
+openai
+azure-cognitiveservices-speech
+python-dotenv
+eng_to_ipa
+pyphen

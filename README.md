@@ -22,8 +22,36 @@ Key: this ✅ is done. ⏩ is current WIP. 🔎 is being looked into [substeps f
     - ✅ download faster-whisper ([I'm using THIS MODDED ONE](https://github.com/AIWintermuteAI/WhisperLive.git), video [here](https://www.youtube.com/watch?v=3yLFWpKKbe8))
     - ✅ load it via terminal
 - ✅ [apr25] stt working via terminal
-- ⏩ llm working via terminal
-- 🕛 tts working via terminal
+- ⏩ tts working via terminal
+    - 🐞bug. my tts is running like 5 times per detected transcibed speech. might need to do threading.
+        ```
+                Americans have come.
+        Running TTS...
+        Words extracted for audio name: ['Americans', 'have', 'come']
+        audioname______________output\1\americans_have_091336.wav
+        TTS completed.
+                Americans have come.
+        Running TTS...
+        Words extracted for audio name: ['Americans', 'have', 'come']
+        audioname______________output\1\americans_have_091338.wav
+        TTS completed.
+                Americans have come.
+        Running TTS...
+        Words extracted for audio name: ['Americans', 'have', 'come']
+        audioname______________output\1\americans_have_091338.wav
+        TTS completed.
+                Americans have come.
+        Running TTS...
+        Words extracted for audio name: ['Americans', 'have', 'come']
+        audioname______________output\1\americans_have_091339.wav
+        TTS completed.
+                Americans have come.
+        Running TTS...
+        Words extracted for audio name: ['Americans', 'have', 'come']
+        audioname______________output\1\americans_have_091340.wav
+        TTS completed.
+        ```
+- 🕛 llm working via terminal
 - 🕛 fix gradio stream from mic
 - 🕛 load entire workflow via gradio
 

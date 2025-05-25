@@ -1,5 +1,7 @@
 # MIGISHA
 whisper-env
+# output/1/
+# chunks/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
