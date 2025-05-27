@@ -1,6 +1,6 @@
 # MIGISHA
 whisper-env
-# output/1/
+output/*/*.wav
 # chunks/
 
 # Byte-compiled / optimized / DLL files

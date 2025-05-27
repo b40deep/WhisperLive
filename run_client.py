@@ -4,8 +4,10 @@ import time
 import subprocess
 from texttospeech import get_speech
 import re
+from terminal_colors import _BLU, _GRN, _RST
 
 last_text = ""
+tts_text = ""
 
 def run_generate_audioname(text):
   words = re.findall(r'\b\w{3,}\b', text)
@@ -16,24 +18,30 @@ def run_generate_audioname(text):
 
 def run_tts():
   print("Running TTS...")
-  global last_text
-  get_speech(last_text, audioname=run_generate_audioname(last_text))
+  global tts_text
+  get_speech(tts_text, audioname=run_generate_audioname(tts_text))
   print("TTS completed.")
 
 def sample_callback(text, is_final):
-  global last_text
+  global last_text, tts_text
   global client
   if is_final and text != last_text:
-    # print("\r" + last_text, end='', flush=True)
-    last_text = text[-1]
-    print("\t" + last_text)
+    # print("\r" + text[-1], end='', flush=True)
+    last_text = text
     client.paused = True
+    # Define the command to be run
+    # command = f'echo "{text[-1]}" | piper --model en_US-lessac-medium --output-raw | aplay -r 22050 -f S16_LE -t raw -'
+    # command = f'echo "{text[-1]}"'
+    # Run the command
+    # subprocess.run(command, shell=True, check=True)
+    print(f"{_BLU} \t {text[-1]} {_RST}") # added by MIGISHA
+    tts_text = text[-1]
     run_tts()
     client.paused = False
   else:
     # os.system("cls" if os.name == "nt" else "clear")
-    # print(last_text, end='', flush=True)
-    print("\t" + last_text)
+    # print(text[-1], end='', flush=True) 
+    print(f"{_GRN} \t {text[-1]} {_RST}") # added by MIGISHA
 
 client = TranscriptionClient(
   "localhost",
