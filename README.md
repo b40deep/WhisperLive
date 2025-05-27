@@ -22,8 +22,8 @@ Key: this ✅ is done. ⏩ is current WIP. 🔎 is being looked into [substeps f
     - ✅ download faster-whisper ([I'm using THIS MODDED ONE](https://github.com/AIWintermuteAI/WhisperLive.git), video [here](https://www.youtube.com/watch?v=3yLFWpKKbe8))
     - ✅ load it via terminal
 - ✅ [apr25] stt working via terminal
-- ⏩ tts working via terminal
-    - 🐞bug. my tts is running like 5 times per detected transcibed speech. might need to do threading.
+- ✅ tts working via terminal
+    - ✅ [fixed] [apr27] 🐞bug. my tts is running like 5 times per detected transcibed speech. might need to do threading.
         ```
                 Americans have come.
         Running TTS...
@@ -51,14 +51,31 @@ Key: this ✅ is done. ⏩ is current WIP. 🔎 is being looked into [substeps f
         audioname______________output\1\americans_have_091340.wav
         TTS completed.
         ```
-- 🕛 llm working via terminal
-- 🕛 fix gradio stream from mic
+- ✅ llm working via terminal
+- ✅✅ ENTIRE PIPELINE working via terminal
+- ⏩ sort out some bugs
+    - 🐞 llm exceptions aren't handled so they crash the client program in the terminal
+    - 🐞 [important] the stt truncates quickly so short pauses break long sentences
+        ```Is it common for a Roman jailer? 
+          Is it common for a Roman jailer? 
+          Is it common for a Roman jayla? 
+          Is it common for a Roman jayla? 
+          It's prison. 
+          this prisoner's home. 
+          this prisoner's home and feed them. 
+          this prisoner's home and feed them. 
+          
+          instead of "is it common for a Roman jailer to take his prisoners home and feed them?" 
+        ```
+- 🕛 figure out how to add gradio / fix gradio stream from mic
 - 🕛 load entire workflow via gradio
 
 ## previous workflows
 
 ### [current] faster-whisper for 'cheap' forever stt.
 Load up faster-whisper and run stt forever on one thread. then check for keywords, and run the pipeline from there.
+- increased the wait time in `client.py` so that the client doesn't close while the audio response from the LLM is playing.
+    - `self.disconnect_if_no_response_for = 60 # 15 MIGISHA changed to 60 seconds`
 
 ### [failed] run threads for the vad and stt. then run llm and tts.
 This was perfect. but I can't seem to get it to work. I implemented it by calling defs from their files and it double-run the stt. I implemented the defs directly into my main code and it more than double-run the stt - this time it called stt every so often, in a forever loop.
