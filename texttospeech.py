@@ -89,7 +89,10 @@ def main():
     text = "In the beautiful suburb of Hout Bay, Sipho, a recent transplant from Johannesburg, feels isolated and struggles to connect with his new surroundings and the local community."
     text = "Briefly explain the protestant reformation in simple clear english."
     text = "Briefly explain the difference between Islam and Christianity."
-    text = do_llm.get_llm_res(text)
+    text = "Error, commander sir."
+    text = "no response from commando."
+    text = "audio error. say again please."
+    # text = do_llm.get_llm_res(text)
 
     # res = get_speech(text, audiosavepath, audioname)
     res = get_speech(text, default_audio_savepath, default_audioname)

@@ -54,7 +54,7 @@ class Client:
         self.uid = str(uuid.uuid4())
         self.waiting = False
         self.last_response_received = None
-        self.disconnect_if_no_response_for = 15
+        self.disconnect_if_no_response_for = 60 # 15 MIGISHA changed to 60 seconds 
         self.language = lang
         self.model = model
         self.server_error = False
